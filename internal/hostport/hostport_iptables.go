@@ -47,22 +47,22 @@ const (
 	crioMasqueradeChainPrefix string = "CRIO-MASQ-"
 )
 
-type hostportManager struct {
+type hostportManagerIPTables struct {
 	ip4tables utiliptables.Interface
 	ip6tables utiliptables.Interface
 	mu        sync.Mutex
 }
 
-// NewHostportManager creates a new HostPortManager.
-func NewHostportManager() HostPortManager {
+// newHostportManagerIPTables creates a new iptables HostPortManager.
+func newHostportManagerIPTables() HostPortManager {
 	exec := utilexec.New()
-	return &hostportManager{
+	return &hostportManagerIPTables{
 		ip4tables: utiliptables.New(exec, utiliptables.ProtocolIPv4),
 		ip6tables: utiliptables.New(exec, utiliptables.ProtocolIPv6),
 	}
 }
 
-func (hm *hostportManager) Add(id string, podPortMapping *PodPortMapping, natInterfaceName string) (err error) {
+func (hm *hostportManagerIPTables) Add(id string, podPortMapping *PodPortMapping, natInterfaceName string) (err error) {
 	podFullName := getPodFullName(podPortMapping)
 	// IP.To16() returns nil if IP is not a valid IPv4 or IPv6 address
 	if podPortMapping.IP.To16() == nil {
@@ -189,7 +189,7 @@ func (hm *hostportManager) Add(id string, podPortMapping *PodPortMapping, natInt
 	return nil
 }
 
-func (hm *hostportManager) Remove(id string, podPortMapping *PodPortMapping) (err error) {
+func (hm *hostportManagerIPTables) Remove(id string, podPortMapping *PodPortMapping) (err error) {
 	var errors []error
 	// Remove may not have the IP information, so we try to clean us much as possible
 	// and warn about the possible errors
@@ -205,7 +205,7 @@ func (hm *hostportManager) Remove(id string, podPortMapping *PodPortMapping) (er
 	return utilerrors.NewAggregate(errors)
 }
 
-func (hm *hostportManager) removeForFamily(id string, podPortMapping *PodPortMapping, ipt utiliptables.Interface) (err error) {
+func (hm *hostportManagerIPTables) removeForFamily(id string, podPortMapping *PodPortMapping, ipt utiliptables.Interface) (err error) {
 	hostportMappings := gatherHostportMappings(podPortMapping, ipt.IsIPv6())
 	if len(hostportMappings) == 0 {
 		return nil

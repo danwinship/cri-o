@@ -28,10 +28,10 @@ import (
 	utiliptables "github.com/cri-o/cri-o/internal/iptables"
 )
 
-// newFakeManager creates a new Manager with fake iptables. Note that we need to create
+// newFakeManagerIPTables creates a new Manager with fake iptables. Note that we need to create
 // (and semi-initialize) both ip4tables and ip6tables even for the single-stack tests,
 // because Remove() will try to use both.
-func newFakeManager() *hostportManager {
+func newFakeManagerIPTables() *hostportManagerIPTables {
 	ip4tables := newFakeIPTables()
 	ip4tables.protocol = utiliptables.ProtocolIPv4
 	//nolint:errcheck // can't fail with fake iptables
@@ -42,7 +42,7 @@ func newFakeManager() *hostportManager {
 	//nolint:errcheck // can't fail with fake iptables
 	_, _ = ip6tables.EnsureChain(utiliptables.TableNAT, utiliptables.ChainOutput)
 
-	return &hostportManager{
+	return &hostportManagerIPTables{
 		ip4tables: ip4tables,
 		ip6tables: ip6tables,
 	}
@@ -83,7 +83,7 @@ var _ = t.Describe("HostPortManagerIPTables", func() {
 	})
 
 	It("should support IPv4", func() {
-		manager := newFakeManager()
+		manager := newFakeManagerIPTables()
 		testCases := []struct {
 			mapping     *PodPortMapping
 			expectError bool
@@ -304,7 +304,7 @@ var _ = t.Describe("HostPortManagerIPTables", func() {
 	})
 
 	It("should support IPv6", func() {
-		manager := newFakeManager()
+		manager := newFakeManagerIPTables()
 		testCases := []struct {
 			mapping     *PodPortMapping
 			expectError bool
@@ -439,7 +439,7 @@ var _ = t.Describe("HostPortManagerIPTables", func() {
 	})
 
 	It("should support dual stack", func() {
-		manager := newFakeManager()
+		manager := newFakeManagerIPTables()
 		testCases := []struct {
 			mapping     *PodPortMapping
 			expectError bool
