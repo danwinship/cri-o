@@ -67,9 +67,6 @@ func NewHostportManager() HostPortManager {
 }
 
 func (hm *hostportManager) Add(id string, podPortMapping *PodPortMapping, natInterfaceName string) (err error) {
-	if podPortMapping == nil || podPortMapping.HostNetwork {
-		return nil
-	}
 	podFullName := getPodFullName(podPortMapping)
 	// IP.To16() returns nil if IP is not a valid IPv4 or IPv6 address
 	if podPortMapping.IP.To16() == nil {
@@ -197,10 +194,6 @@ func (hm *hostportManager) Add(id string, podPortMapping *PodPortMapping, natInt
 }
 
 func (hm *hostportManager) Remove(id string, podPortMapping *PodPortMapping) (err error) {
-	if podPortMapping == nil || podPortMapping.HostNetwork {
-		return nil
-	}
-
 	var errors []error
 	// Remove may not have the IP information, so we try to clean us much as possible
 	// and warn about the possible errors

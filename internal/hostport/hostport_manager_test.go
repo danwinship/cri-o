@@ -58,10 +58,9 @@ var _ = t.Describe("HostPortManager", func() {
 			// open HostPorts 8080/TCP, 8081/UDP and 8083/SCTP
 			{
 				mapping: &PodPortMapping{
-					Name:        "pod1",
-					Namespace:   "ns1",
-					IP:          net.ParseIP("10.1.1.2"),
-					HostNetwork: false,
+					Name:      "pod1",
+					Namespace: "ns1",
+					IP:        net.ParseIP("10.1.1.2"),
 					PortMappings: []*PortMapping{
 						{
 							HostPort:      8080,
@@ -85,10 +84,9 @@ var _ = t.Describe("HostPortManager", func() {
 			// open port 443
 			{
 				mapping: &PodPortMapping{
-					Name:        "pod3",
-					Namespace:   "ns1",
-					IP:          net.ParseIP("10.1.1.4"),
-					HostNetwork: false,
+					Name:      "pod3",
+					Namespace: "ns1",
+					IP:        net.ParseIP("10.1.1.4"),
 					PortMappings: []*PortMapping{
 						{
 							HostPort:      8443,
@@ -102,10 +100,9 @@ var _ = t.Describe("HostPortManager", func() {
 			// open same HostPort on different IP
 			{
 				mapping: &PodPortMapping{
-					Name:        "pod5",
-					Namespace:   "ns5",
-					IP:          net.ParseIP("10.1.1.5"),
-					HostNetwork: false,
+					Name:      "pod5",
+					Namespace: "ns5",
+					IP:        net.ParseIP("10.1.1.5"),
 					PortMappings: []*PortMapping{
 						{
 							HostPort:      8888,
@@ -126,10 +123,9 @@ var _ = t.Describe("HostPortManager", func() {
 			// open same HostPort on different
 			{
 				mapping: &PodPortMapping{
-					Name:        "pod6",
-					Namespace:   "ns1",
-					IP:          net.ParseIP("10.1.1.2"),
-					HostNetwork: false,
+					Name:      "pod6",
+					Namespace: "ns1",
+					IP:        net.ParseIP("10.1.1.2"),
 					PortMappings: []*PortMapping{
 						{
 							HostPort:      9999,
@@ -282,10 +278,9 @@ var _ = t.Describe("HostPortManager", func() {
 		}{
 			{
 				mapping: &PodPortMapping{
-					Name:        "pod1",
-					Namespace:   "ns1",
-					IP:          net.ParseIP("2001:beef::2"),
-					HostNetwork: false,
+					Name:      "pod1",
+					Namespace: "ns1",
+					IP:        net.ParseIP("2001:beef::2"),
 					PortMappings: []*PortMapping{
 						{
 							HostPort:      8080,
@@ -308,10 +303,9 @@ var _ = t.Describe("HostPortManager", func() {
 			},
 			{
 				mapping: &PodPortMapping{
-					Name:        "pod3",
-					Namespace:   "ns1",
-					IP:          net.ParseIP("2001:beef::4"),
-					HostNetwork: false,
+					Name:      "pod3",
+					Namespace: "ns1",
+					IP:        net.ParseIP("2001:beef::4"),
 					PortMappings: []*PortMapping{
 						{
 							HostPort:      8443,
@@ -419,10 +413,9 @@ var _ = t.Describe("HostPortManager", func() {
 		}{
 			{
 				mapping: &PodPortMapping{
-					Name:        "pod1",
-					Namespace:   "ns1",
-					IP:          net.ParseIP("192.168.2.7"),
-					HostNetwork: false,
+					Name:      "pod1",
+					Namespace: "ns1",
+					IP:        net.ParseIP("192.168.2.7"),
 					PortMappings: []*PortMapping{
 						{
 							HostPort:      8080,
@@ -453,10 +446,9 @@ var _ = t.Describe("HostPortManager", func() {
 			// but different IP must work
 			{
 				mapping: &PodPortMapping{
-					Name:        "pod1",
-					Namespace:   "ns1",
-					IP:          net.ParseIP("2001:beef::3"),
-					HostNetwork: false,
+					Name:      "pod1",
+					Namespace: "ns1",
+					IP:        net.ParseIP("2001:beef::3"),
 					PortMappings: []*PortMapping{
 						{
 							HostPort:      8080,
@@ -485,10 +477,9 @@ var _ = t.Describe("HostPortManager", func() {
 			},
 			{
 				mapping: &PodPortMapping{
-					Name:        "pod3",
-					Namespace:   "ns1",
-					IP:          net.ParseIP("2001:beef::4"),
-					HostNetwork: false,
+					Name:      "pod3",
+					Namespace: "ns1",
+					IP:        net.ParseIP("2001:beef::4"),
 					PortMappings: []*PortMapping{
 						{
 							HostPort:      8443,
@@ -503,10 +494,9 @@ var _ = t.Describe("HostPortManager", func() {
 			// but using another IP family
 			{
 				mapping: &PodPortMapping{
-					Name:        "pod4",
-					Namespace:   "ns2",
-					IP:          net.ParseIP("192.168.2.2"),
-					HostNetwork: false,
+					Name:      "pod4",
+					Namespace: "ns2",
+					IP:        net.ParseIP("192.168.2.2"),
 					PortMappings: []*PortMapping{
 						{
 							HostPort:      8443,

@@ -51,7 +51,6 @@ type PodPortMapping struct {
 	Namespace    string
 	Name         string
 	PortMappings []*PortMapping
-	HostNetwork  bool
 	IP           net.IP
 }
 
