@@ -48,8 +48,41 @@ func newFakeManager() *hostportManager {
 	}
 }
 
-var _ = t.Describe("HostPortManager", func() {
-	It("HostportManagerIPv4", func() {
+var _ = t.Describe("HostPortManagerIPTables", func() {
+	It("should ensure kube hostport chains", func() {
+		interfaceName := "cbr0"
+
+		fakeIPTables := newFakeIPTables()
+		Expect(ensureKubeHostportChains(fakeIPTables, interfaceName)).To(Succeed())
+
+		_, _, err := fakeIPTables.getChain(utiliptables.TableNAT, utiliptables.Chain("KUBE-HOSTPORTS"))
+		Expect(err).ToNot(HaveOccurred())
+
+		builtinChains := []string{"PREROUTING", "OUTPUT"}
+		hostPortJumpRule := "-m comment --comment \"kube hostport portals\" -m addrtype --dst-type LOCAL -j KUBE-HOSTPORTS"
+
+		for _, chainName := range builtinChains {
+			_, chain, err := fakeIPTables.getChain(utiliptables.TableNAT, utiliptables.Chain(chainName))
+			Expect(err).ToNot(HaveOccurred())
+			Expect(len(chain.rules)).To(BeEquivalentTo(1))
+			Expect(chain.rules).To(ContainElement(hostPortJumpRule))
+		}
+
+		masqJumpRule := "-m comment --comment \"kube hostport masquerading\" -m conntrack --ctstate DNAT -j CRIO-HOSTPORTS-MASQ"
+		localhostMasqRule := "-m comment --comment \"SNAT for localhost access to hostports\" -o cbr0 -s 127.0.0.0/8 -j MASQUERADE"
+
+		_, chain, err := fakeIPTables.getChain(utiliptables.TableNAT, utiliptables.ChainPostrouting)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(chain.rules)).To(BeEquivalentTo(1))
+		Expect(chain.rules).To(ContainElement(masqJumpRule))
+
+		_, chain, err = fakeIPTables.getChain(utiliptables.TableNAT, crioMasqueradeChain)
+		Expect(err).ToNot(HaveOccurred())
+		Expect(len(chain.rules)).To(BeEquivalentTo(1))
+		Expect(chain.rules).To(ContainElement(localhostMasqRule))
+	})
+
+	It("should support IPv4", func() {
 		manager := newFakeManager()
 		testCases := []struct {
 			mapping     *PodPortMapping
@@ -270,7 +303,7 @@ var _ = t.Describe("HostPortManager", func() {
 		Expect(m).To(HaveLen(4))
 	})
 
-	It("HostportManagerIPv6", func() {
+	It("should support IPv6", func() {
 		manager := newFakeManager()
 		testCases := []struct {
 			mapping     *PodPortMapping
@@ -405,7 +438,7 @@ var _ = t.Describe("HostPortManager", func() {
 		}
 	})
 
-	It("HostportManagerDualStack", func() {
+	It("should support dual stack", func() {
 		manager := newFakeManager()
 		testCases := []struct {
 			mapping     *PodPortMapping
